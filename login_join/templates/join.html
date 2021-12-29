@@ -36,9 +36,12 @@
                 <input id="joinBtn" type="submit" value="회원가입" >
             </form>
         </div>
-
+        <button onclick="login()">로그인</button>
     </div>
     <script>
+            function login(){
+                window.location.href = '/login'
+            }
             function isPassword(asValue) {
                 const regExp = /^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z]{8,16}$/;
                 return regExp.test(asValue);

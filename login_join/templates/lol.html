@@ -33,7 +33,7 @@
                 <input id="loginBtn" type="submit" value="로그인" onclick="" >
             </form>
         </div>
-        <button onclick="loginWithGithub()">continue with github</button>
+        <button onclick="join()">회원가입</button>
     </div>
     <script>
             const a = document.getElementById("loginBtn")
@@ -53,6 +53,7 @@
                         console.log(res)
                         if (res.result == 'success'){
                             $.cookie('token', res['token']);
+                            window.location.href = '/'
                         }
                         else {
                             alert(res.msg)
@@ -61,15 +62,18 @@
                     }
                 });
             })
-            function loginWithGithub(){
-                const baseUrl = 'https://github.com/login/oauth/authorize'
-                config = {
-                    client_id : '94debc0ee29ed22a1f74',
-                    scope : 'read:user'
-                }
-                const params= new URLSearchParams(config).toString()
-                window.location.href = `${baseUrl}?${params}`
+            function join(){
+                window.location.href = '/join'
             }
+            // function loginWithGithub(){
+            //     const baseUrl = 'https://github.com/login/oauth/authorize'
+            //     config = {
+            //         client_id : '94debc0ee29ed22a1f74',
+            //         scope : 'read:user'
+            //     }
+            //     const params= new URLSearchParams(config).toString()
+            //     window.location.href = `${baseUrl}?${params}`
+            // }
 
         </script>
 </body>

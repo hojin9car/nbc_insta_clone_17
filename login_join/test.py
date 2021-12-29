@@ -3,23 +3,46 @@ import requests
 from pymongo import MongoClient
 import hashlib
 import jwt
-import datetime
+
+
 SECRET_KEY = 'sparta'
 
 client = MongoClient('localhost',27017)
 db = client.dbProject1
 
-
 app = Flask(__name__)
+
+
+def home():
+    token_receive = request.cookies.get('token')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.user.find_one({"user_id": payload['id']})
+        return user_info
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
+
+
+
 
 @app.route('/')
 def hello():
+    token_receive = request.cookies.get('token')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.user.find_one({"user_id": payload['id']})
+        return render_template('index.html', user=user_info)
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login_page"))
 
-    return render_template('join.html')
+
 
 @app.route('/login')
 def login_page():
     return render_template('lol.html')
+@app.route('/join')
+def join_page():
+    return render_template('join.html')
 
 @app.route('/api/login',methods=['POST'])
 def login():
@@ -40,38 +63,38 @@ def login():
     return jsonify({'result': 'success', 'token': token})
 
 
-@app.route('/login/github/callback')
-def login_github():
-    code = request.args.get('code')
-
-
-
-    client_secret = '31dea26d2ca436678af09e88085248358c8e8e06'
-
-
-    client_id = '94debc0ee29ed22a1f74'
-    # redirect_uri = 'localhost:5000/login/github/callback'
-    params = {'code': code, 'client_id': '94debc0ee29ed22a1f74', 'client_secret':client_secret}
-    print('token mae')
-    # "Content-Type": "application/x-www-form-urlencoded",
-    # "Cache-Control": "no-cache",
-
-
-    headers = {'Content-Type': 'application/json'}
-    a = requests.post(
-        url="https://github.com/login/oauth/authorize",
-        headers={
-            "Accept": "application/json",
-            "Cache-Control": "no-cache",
-        },
-        json=params
-    )
-
-    print('token ato')
-
-    print(a)
-    print('1')
-    return
+# @app.route('/login/github/callback')
+# def login_github():
+#     code = request.args.get('code')
+#
+#
+#
+#     client_secret = '31dea26d2ca436678af09e88085248358c8e8e06'
+#
+#
+#     client_id = '94debc0ee29ed22a1f74'
+#     # redirect_uri = 'localhost:5000/login/github/callback'
+#     params = {'code': code, 'client_id': '94debc0ee29ed22a1f74', 'client_secret':client_secret}
+#     print('token mae')
+#     # "Content-Type": "application/x-www-form-urlencoded",
+#     # "Cache-Control": "no-cache",
+#
+#
+#     headers = {'Content-Type': 'application/json'}
+#     a = requests.get(
+#         url="https://github.com/login/oauth/authorize",
+#         headers={
+#             "Accept": "application/json",
+#             "Cache-Control": "no-cache",
+#         },
+#         params=params
+#     )
+#
+#     print('token ato')
+#
+#     print(a)
+#     print('1')
+#     return
 
 @app.route('/api/join',methods=['POST'])
 def join():
