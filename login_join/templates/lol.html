@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://unpkg.com/mvp.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <style>
+        #login-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            text-align: center;
+        }
+
+        #loginBtn:hover{
+            border: 1px solid gainsboro;
+        }
+
+    </style>
+
+</head>
+<body>
+    <div id="login-box">
+        <h1 id="login-title">로그인</h1>
+        <div >
+            <span class="error-msg"></span>
+            <form>
+                <input id="id" type="text" placeholder="아이디">
+                <input id="password1" type="password" placeholder="비밀번호">
+                <input id="loginBtn" type="submit" value="로그인" onclick="" >
+            </form>
+        </div>
+        <button onclick="loginWithGithub()">continue with github</button>
+    </div>
+    <script>
+            const a = document.getElementById("loginBtn")
+            err = document.querySelector(".error-msg")
+            a.addEventListener('click',function (e){
+                e.preventDefault()
+                const pass1 = document.getElementById("password1").value
+                const id = document.getElementById("id").value
+                $.ajax({
+                    type: "POST",
+                    url: "api/login",
+                    dataType: "json",
+                    contentType: "application/json; charset=UTF-8",
+                    data:JSON.stringify({"id_give": id, "pass_give":pass1})
+                        ,
+                    success: function(res){
+                        console.log(res)
+                        if (res.result == 'success'){
+                            $.cookie('token', res['token']);
+                        }
+                        else {
+                            alert(res.msg)
+                            $('#form')[0].reset()
+                        }
+                    }
+                });
+            })
+            function loginWithGithub(){
+                const baseUrl = 'https://github.com/login/oauth/authorize'
+                config = {
+                    client_id : '94debc0ee29ed22a1f74',
+                    scope : 'read:user'
+                }
+                const params= new URLSearchParams(config).toString()
+                window.location.href = `${baseUrl}?${params}`
+            }
+
+        </script>
+</body>
+</html>
