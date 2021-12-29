@@ -3,42 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="https://unpkg.com/mvp.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        #join-box {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%,-50%);
-            text-align: center;
-        }
-        #join-title {
-
-        }
-        #joinBtn:hover{
-            border: 1px solid gainsboro;
-        }
-
-    </style>
-
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"/>
+    <link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
-    <div id="join-box">
+    <div class="block" id="join-box">
+        <div class="img-box">
+            <img src="../static/logo.png" alt="logo">
+        </div>
         <h1 id="join-title">회원 가입</h1>
-        <div >
+        <div class="box join-content">
             <span class="error-msg"></span>
             <form id="form">
-                <input id="id" type="text" placeholder="아이디">
-                <input id="nick" type="text" placeholder="이름">
-                <input id="password1" type="password" placeholder="비밀번호">
-                <input id="password2" type="password" placeholder="비밀번호 확인">
-                <input id="joinBtn" type="submit" value="회원가입" >
+
+                <input id="id" type="text" class="input is-small is-rounded" placeholder="아이디">
+                <button  class="button is-info is-light" id="isIt"><span>중복확인</span></button>
+
+
+                <input id="nick" type="text" class="input is-small is-rounded" placeholder="이름">
+                <input id="password1" type="password" class="input is-small is-rounded"  placeholder="비밀번호">
+                <input id="password2" type="password" class="input is-small is-rounded" placeholder="비밀번호 확인">
+                <button id="joinBtn" class="button is-success is-light">
+                    <span class="icon is-small">
+                      <i class="fas fa-check"></i>
+                    </span>
+                    <span>회원가입</span>
+                </button>
+
             </form>
         </div>
-        <button onclick="login()">로그인</button>
+        <a onclick="login()" >이미 아이디가 있으신가요? </a>
     </div>
     <script>
+           err = document.querySelector("#join-title")
+            isItBtn =  document.querySelector("#isIt")
+
             function login(){
                 window.location.href = '/login'
             }
@@ -47,53 +50,83 @@
                 return regExp.test(asValue);
             }
             function isId(value){
-               const idReg = /^[a-z]+[a-z0-9]{5,19}$/g;
-               return idReg.test(value)
+                const idReg = /^[a-z]+[a-z0-9]{5,19}$/g;
+                return idReg.test(value)
             }
-            const a = document.getElementById("joinBtn")
-            err = document.querySelector(".error-msg")
 
-            a.addEventListener('click',function (e){
+            isItBtn.addEventListener('click',function (e) {
+
                 e.preventDefault()
-                const pass1 = document.getElementById("password1").value
-                const pass2 = document.getElementById("password2").value
-                const id = document.getElementById("id").value
-                const nick = document.getElementById("nick").value
-                if(!isId(id)) {
+                const isIt = document.querySelector("#id").value
+                if (!isId(isIt)) {
                     err.innerText = "아이디는 영문자로 시작하는 6~20자 영문자 또는 숫자이어야 합니다."
-                    $('#form')[0].reset()
-                    return;
-                }
-                if (pass1 != pass2){
-                    err.innerText = '비밀번호가 일치하지 않습니다'
-                    $('#form')[0].reset()
                     return
                 }
-                if(!isPassword(pass2)) {
-                    err.innerText = "비밀번호는 8 ~ 16자 영문, 숫자 조합을 해주세요!"
-                    $('#form')[0].reset()
-                    return;
-                }
+                console.log(isIt)
                 $.ajax({
-                    type: "POST",
-                    url: "/api/join",
-                    dataType: "json",
-                    contentType: "application/json; charset=UTF-8",
-                    data:JSON.stringify({"id_give": id, "nick_give":nick, "pass_give":pass2})
-                        ,
-                    success: function(res){
-                        if (res.result == 'success'){
+                    type: "GET",
+                    url: `/api/isit?id=${isIt}`,
+                    success: function (res) {
+                        console.log(res)
+                        if (res.result == 'success') {
                             alert(res.msg)
-                            window.location.href = '/login'
-                        }
-                        else {
+                            isItBtn.disabled = true
+                        } else {
                             alert(res.msg)
                             $('#form')[0].reset()
                         }
                     }
-                });
+                })
             })
 
-        </script>
+        const a = document.getElementById("joinBtn")
+        err = document.querySelector("#join-title")
+
+        a.addEventListener('click',function (e){
+            e.preventDefault()
+            const pass1 = document.getElementById("password1").value
+            const pass2 = document.getElementById("password2").value
+            const id = document.getElementById("id").value
+            const nick = document.getElementById("nick").value
+            if (isItBtn.disabled != true){
+                err.innerText = "아이디 중복확인을 해주세요."
+                return
+            }
+            if(!isId(id)) {
+                err.innerText = "아이디는 영문자로 시작하는 6~20자 영문자 또는 숫자이어야 합니다."
+                $('#form')[0].reset()
+                return
+            }
+            if (pass1 != pass2){
+                err.innerText = '비밀번호가 일치하지 않습니다'
+                $('#form')[0].reset()
+                return
+            }
+            if(!isPassword(pass2)) {
+                err.innerText = "비밀번호는 8 ~ 16자 영문, 숫자 조합을 해주세요!"
+                $('#form')[0].reset()
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/api/join",
+                dataType: "json",
+                contentType: "application/json; charset=UTF-8",
+                data:JSON.stringify({"id_give": id, "nick_give":nick, "pass_give":pass2})
+                ,
+                success: function(res){
+                    if (res.result == 'success'){
+                        alert(res.msg)
+                        window.location.href = '/login'
+                    }
+                    else {
+                        alert(res.msg)
+                        $('#form')[0].reset()
+                    }
+                }
+            });
+        })
+
+    </script>
 </body>
 </html>

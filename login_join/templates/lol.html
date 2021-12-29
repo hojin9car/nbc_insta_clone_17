@@ -3,45 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="https://unpkg.com/mvp.css">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
-    <style>
-        #login-box {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%,-50%);
-            text-align: center;
-        }
-
-        #loginBtn:hover{
-            border: 1px solid gainsboro;
-        }
-
-    </style>
-
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"/>
+    <link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
-    <div id="login-box">
+    <div class="block" id="login-box">
+        <div class="img-box">
+            <img src="../static/logo.png" alt="logo">
+        </div>
         <h1 id="login-title">로그인</h1>
-        <div >
+        <div  class ="box login-content">
             <span class="error-msg"></span>
-            <form>
-                <input id="id" type="text" placeholder="아이디">
-                <input id="password1" type="password" placeholder="비밀번호">
-                <input id="loginBtn" type="submit" value="로그인" onclick="" >
+            <form class="login-form">
+                <input id="id" type="text" class="input is-small is-rounded" placeholder="아이디">
+                <input id="password1" type="password" class="input is-small is-rounded"  placeholder="비밀번호">
+                <button id="loginBtn" class="button is-success is-light">
+                    <span class="icon is-small">
+                      <i class="fas fa-check"></i>
+                    </span>
+                    <span>로그인</span>
+                </button>
+
             </form>
         </div>
-        <button onclick="join()">회원가입</button>
+        <button class="button is-small" onclick="loginWithKakao()">
+            <span class="icon">
+              <i class="fas fa-comment"></i>
+            </span>
+            <span>카카오톡으로 로그인하기</span>
+        </button>
+        <br>
+        <br>
+
+
+        <a onclick="join()" >아이디가 없으신가요?</a>
     </div>
     <script>
             const a = document.getElementById("loginBtn")
-            err = document.querySelector(".error-msg")
+            err = document.querySelector("#login-title")
             a.addEventListener('click',function (e){
                 e.preventDefault()
                 const pass1 = document.getElementById("password1").value
                 const id = document.getElementById("id").value
+                if(pass1 == '' || id == ''){
+                    err.innerText = '아이디 혹은 비밀번호를 입력해주세요.'
+                    return
+                }
                 $.ajax({
                     type: "POST",
                     url: "api/login",
@@ -65,15 +76,16 @@
             function join(){
                 window.location.href = '/join'
             }
-            // function loginWithGithub(){
-            //     const baseUrl = 'https://github.com/login/oauth/authorize'
-            //     config = {
-            //         client_id : '94debc0ee29ed22a1f74',
-            //         scope : 'read:user'
-            //     }
-            //     const params= new URLSearchParams(config).toString()
-            //     window.location.href = `${baseUrl}?${params}`
-            // }
+            function loginWithKakao(){
+                const baseUrl = 'https://kauth.kakao.com/oauth/authorize'
+                config = {
+                    client_id : '7f535c9ad05fa8ee370a9eb9318421c7',
+                    redirect_uri : 'http://localhost:5000/login/kakao',
+                    response_type : 'code'
+                }
+                const params= new URLSearchParams(config).toString()
+                window.location.href = `${baseUrl}?${params}`
+            }
 
         </script>
 </body>
