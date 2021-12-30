@@ -58,4 +58,11 @@ input {
 #loginBtn:hover{
     border: 1px solid gainsboro;
 }
-
+#login-box #kakao-btn {
+    background-color: #fae100;
+}
+#login-box #github-btn {
+    width: 163.250px;
+    height: 30px;
+    margin-bottom: 10px;
+}

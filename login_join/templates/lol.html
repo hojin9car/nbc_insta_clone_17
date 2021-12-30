@@ -30,7 +30,13 @@
 
             </form>
         </div>
-        <button class="button is-small" onclick="loginWithKakao()">
+        <button class="button is-small" onclick="loginWithGithub()"id="github-btn">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+            <span>깃허브로 로그인하기</span>
+        </button>
+        <button class="button is-small" onclick="loginWithKakao()" id="kakao-btn">
             <span class="icon">
               <i class="fas fa-comment"></i>
             </span>
@@ -82,6 +88,15 @@
                     client_id : '7f535c9ad05fa8ee370a9eb9318421c7',
                     redirect_uri : 'http://localhost:5000/login/kakao',
                     response_type : 'code'
+                }
+                const params= new URLSearchParams(config).toString()
+                window.location.href = `${baseUrl}?${params}`
+            }
+
+            function loginWithGithub(){
+                const baseUrl = 'https://github.com/login/oauth/authorize'
+                config = {
+                    client_id : '94debc0ee29ed22a1f74'
                 }
                 const params= new URLSearchParams(config).toString()
                 window.location.href = `${baseUrl}?${params}`

@@ -70,7 +70,7 @@
                         console.log(res)
                         if (res.result == 'success') {
                             alert(res.msg)
-                            isItBtn.disabled = true
+
                         } else {
                             alert(res.msg)
                             $('#form')[0].reset()
@@ -88,10 +88,6 @@
             const pass2 = document.getElementById("password2").value
             const id = document.getElementById("id").value
             const nick = document.getElementById("nick").value
-            if (isItBtn.disabled != true){
-                err.innerText = "아이디 중복확인을 해주세요."
-                return
-            }
             if(!isId(id)) {
                 err.innerText = "아이디는 영문자로 시작하는 6~20자 영문자 또는 숫자이어야 합니다."
                 $('#form')[0].reset()

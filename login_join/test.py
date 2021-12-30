@@ -156,6 +156,40 @@ def login_kakao():
     resp.set_cookie('token',token)
     return resp
 
+@app.route('/login/github')
+def login_github():
+    code = request.args.get('code')
+    url ='https://github.com/login/oauth/access_token'
+    client_secret = '0775e84c22ce79ebdc1ef85ca5f9293f599e057e'
+    client_id = '94debc0ee29ed22a1f74'
+    headers = {'Accept': 'application/json'}
+
+    resp = requests.post(
+        url=url,
+        headers=headers,
+        data={'client_id': client_id, 'client_secret': client_secret,'code': code}
+    )
+
+    access_token = resp.json()['access_token']
+    url = 'https://api.github.com/user'
+    headers = {'Authorization': f'token {access_token}'}
+    resp = requests.get(
+        url=url,
+        headers=headers,
+    )
+    user_info = resp.json()
+    is_it = db.user.find_one({'user_id': user_info['id']})
+
+    #아이디가 존재하면 아이디 생략 x
+    if not is_it:
+        db.user.insert_one(
+            {'user_id': user_info['id'], 'user_nick': user_info['name'], 'social_only': True})
+    # 토큰 생성후 쿠키 부여
+    payload = {'id': user_info['id']}
+    token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+    resp = make_response(redirect(url_for('home')))
+    resp.set_cookie('token', token)
+    return resp
 
 
 if __name__ == '__main__':
