@@ -8,14 +8,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 </head>
 <body>
-    hi
     <button onclick="logout()" id="outBtn">로그아웃</button>
+    <h1>글을 입력해주세요</h1>
+    <form>
+        <textarea id="content">
+        </textarea>
+        <input type="file">
+        <button onclick="write()">글 작성</button>
+    </form>
     <script>
         function logout(){
-            $('#outBtn').click(function (){
                 $.removeCookie('token');
                 window.location.href = '/'
-            })
+        }
+        function write(){
+            $('#content').val()
+            console.log()
         }
     </script>
 </body>

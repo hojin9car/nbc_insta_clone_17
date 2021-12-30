@@ -30,7 +30,7 @@ def sign_in():
 def get_user():
     token_receive = request.cookies.get('token')
     user_info =  jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-    user = db.user.find_one({'user_id':user_info['id']},{'_id':0})
+    user = db.user.find_one({'id':user_info['id']},{'_id':0})
     return user
 
 #처음 /에 접속시 로그인 안되어있으면 /로 이동, 로그인 되어있으면 /home으로 이동
@@ -69,7 +69,7 @@ def join_page():
 @app.route('/api/isit')
 def id_isit():
     id = request.args.get('id')
-    is_it = db.user.find_one({'user_id':id})
+    is_it = db.user.find_one({'id':id})
 
     if is_it:
         return jsonify({'result': 'fail', 'msg': '아이디가 이미 존재 합니다.'})
@@ -82,11 +82,11 @@ def id_isit():
 def join():
     data = request.json
     pw_hashed = hashlib.sha256(data['pass_give'].encode('utf-8')).hexdigest()
-    is_it = db.user.find_one({'user_id':data['id_give']})
+    is_it = db.user.find_one({'id':data['id_give']})
 
     if is_it:
         return jsonify({'result': 'fail', 'msg':'아이디가 이미 존재 합니다.'})
-    db.user.insert_one({'user_id':data['id_give'],'user_nick':data['nick_give'],'user_pw':pw_hashed,'social_only':False})
+    db.user.insert_one({'id':data['id_give'],'nick':data['nick_give'],'password':pw_hashed,'name':data['name_give'],'social_only':False})
     return jsonify({'result': 'success', 'msg':'아이디를 성공적으로 생성하였습니다.'})
 
 #로그인 페이지
@@ -104,15 +104,15 @@ def login_page():
 def login():
     data = request.json
     pw_hashed = hashlib.sha256(data['pass_give'].encode('utf-8')).hexdigest()
-    is_it = db.user.find_one({'user_id':data['id_give']})
+    is_it = db.user.find_one({'id':data['id_give']})
     if not is_it:
         return jsonify({'result': 'fail', 'msg': '아이디가 존재하지 않아요.'})
-    if pw_hashed != is_it['user_pw']:
+    if pw_hashed != is_it['password']:
         return jsonify({'result': 'fail', 'msg':'비밀번호가 일치하지 않습니다.'})
 
 
     payload = {
-        'id' : is_it['user_id'],
+        'id' : is_it['id'],
 
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
@@ -145,10 +145,10 @@ def login_kakao():
     )
     #토큰을 바탕으로 유저정보 얻어옴
     user_info = resp.json()
-    is_it = db.user.find_one({'user_id':user_info['id']})
+    is_it = db.user.find_one({'id':user_info['id']})
     #아이디가 존재하면 아이디 생략 x
     if not is_it:
-        db.user.insert_one({'user_id': user_info['id'], 'user_nick': user_info['properties']['nickname'], 'social_only': True})
+        db.user.insert_one({'id': user_info['id'], 'nick': user_info['properties']['nickname'],'name': user_info['properties']['nickname'],'social_only': True} )
     #토큰 생성후 쿠키 부여
     payload = {'id': user_info['id']}
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
@@ -178,12 +178,12 @@ def login_github():
         headers=headers,
     )
     user_info = resp.json()
-    is_it = db.user.find_one({'user_id': user_info['id']})
+    is_it = db.user.find_one({'id': user_info['id']})
 
     #아이디가 존재하면 아이디 생략 x
     if not is_it:
         db.user.insert_one(
-            {'user_id': user_info['id'], 'user_nick': user_info['name'], 'social_only': True})
+            {'id': user_info['id'], 'nick': user_info['name'], 'name':user_info['name'] ,'social_only': True})
     # 토큰 생성후 쿠키 부여
     payload = {'id': user_info['id']}
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
