@@ -12,8 +12,7 @@ from auth import login_required
 from auth import get_user
 import db
 
-
-bp = Blueprint("auth", __name__)
+bp = Blueprint("post", __name__)
 db = db.get_db()
 
 
@@ -58,6 +57,37 @@ def api_delete():
     # 현재 로그인 사용자와 글작성자가 같아야지 진행이 가능
     if one['user._id'] != user['_id']:
         # 같지 않다면 홈화면 보이게함 이건 나중에 수정
-        return redirect(url_for('home'))
+        return redirect(url_for('post.home'))
     db.contents.delete_one({'_id': one['_id']})
-    return redirect(url_for('home'))
+    return redirect(url_for('post.home'))
+
+
+# 글 수정 화면
+@bp.route('/api/edit', methods=['POST'])
+@login_required
+def api_edit():
+    data = request.json
+    id = data['id']
+    text_area = data['text-area']
+
+    db.contents.update_one({'_id': ObjectId(id)}, {
+        '$set': {'content': text_area, 'write_edit_time': dt.datetime.now().strftime("%Y년 %m월 %d일 %H시 %M분 %S초")}})
+    return jsonify({'result': 'success'})
+
+
+# 글 수정 화면
+@bp.route('/edit_write/<id>')
+@login_required
+def edit_write(id):
+    content = db.contents.find_one({'_id': ObjectId(id)})
+    return render_template('edit_write.html', content=content)
+
+
+# 홈 화면
+@bp.route('/home')
+@login_required
+def home():
+    user = get_user()
+    content_list = list(db.contents.find({}).sort([('write_time', -1)]))
+
+    return render_template('home.html', contents=content_list)
