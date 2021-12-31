@@ -3,7 +3,6 @@ from flask import render_template
 
 import auth
 import mypage
-import mypage
 
 app = Flask(__name__)
 app.secret_key = 'sparta'

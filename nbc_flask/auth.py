@@ -33,6 +33,7 @@ def login_required(f):
             return 'bad'
         except jwt.exceptions.DecodeError:
             return 'bad'
+
     return wrap
 
 
@@ -43,6 +44,7 @@ def login_not_required(f):
             return redirect('/')
         else:
             return f(**kwargs)
+
     return wrap
 
 
@@ -70,3 +72,37 @@ def login_page():
     return render_template('lol.html')
 
 
+# 로그인 api
+@bp.route('/api/login', methods=['POST'])
+@login_not_required
+def login():
+    data = request.json
+    pw_hashed = hashlib.sha256(data['pass_give'].encode('utf-8')).hexdigest()
+    is_it = db.user.find_one({'id': data['id_give']})
+
+    if not is_it:
+        return jsonify({'result': 'fail', 'msg': '아이디가 존재하지 않아요.'})
+    if pw_hashed != is_it['password']:
+        return jsonify({'result': 'fail', 'msg': '비밀번호가 일치하지 않습니다.'})
+
+    payload = {
+        'id': is_it['id'],
+    }
+    token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+    return jsonify({'result': 'success', 'token': token})
+
+
+# 회원가입
+@bp.route('/api/join', methods=['POST'])
+@login_not_required
+def join():
+    data = request.json
+    pw_hashed = hashlib.sha256(data['pass_give'].encode('utf-8')).hexdigest()
+    is_it = db.user.find_one({'id': data['id_give']})
+
+    if is_it:
+        return jsonify({'result': 'fail', 'msg': '아이디가 이미 존재 합니다.'})
+    db.user.insert_one(
+        {'id': data['id_give'], 'nick': data['nick_give'], 'password': pw_hashed, 'name': data['name_give'],
+         'social_only': False})
+    return jsonify({'result': 'success', 'msg': '아이디를 성공적으로 생성하였습니다.'})
