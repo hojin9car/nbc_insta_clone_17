@@ -32,6 +32,16 @@ def get_user():
     user_info =  jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
     user = db.user.find_one({'id':user_info['id']})
     return user
+#글 쓰는 화면으로 이동
+@app.route('/new_write')
+def new_write():
+    # 로그인 되어있지 않으면 로그인창으로 보냄
+    logged = sign_in()
+    if logged == 'bad':
+        return redirect(url_for('login_page'))
+    return render_template('new_write.html')
+
+
 
 #글 작성
 @app.route('/api/write',methods=['POST'])
@@ -45,8 +55,8 @@ def api_wirte():
     'comments':0,'write_time':dt.datetime.now().strftime("%Y년 %m월 %d일 %H시 %M분 %S초"),'write_edit_time':'','img':'','content':data['text_give']})
     #글 작성한 것 가져오기 new_one사용 안됨
     content = db.contents.find_one({'_id':new_one.inserted_id})
-    #response로 글 보냄
-    return jsonify( {'content': dumps(content)})
+
+    return jsonify( {'result': 'success'})
 
 @app.route('/api/delete',methods=['PUT'])
 def api_delete():
@@ -65,3 +75,22 @@ def api_delete():
         return redirect(url_for('home'))
     db.contents.delete_one({'_id':one['_id']})
     return redirect(url_for('home'))
+
+#마이페이지 이동
+@app.route('/my_main')
+def my_main():
+    # 로그인 되어있지 않으면 로그인창으로 보냄
+    logged = sign_in()
+    if logged == 'bad':
+        return redirect(url_for('login_page'))
+    user = get_user()
+    content_list = list(db.contents.find({}).sort([('write_time', -1)]))
+    selected_list = []
+    for i in content_list:
+        if i['user._id'] == ObjectId(user['_id']):
+            selected_list.append(i)
+
+
+    return render_template('my_main.html', contents=selected_list)
+
+

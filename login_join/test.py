@@ -102,20 +102,31 @@ def login_page():
         return redirect(url_for('home'))
     return render_template('lol.html')
 
-#글 작성
-@app.route('/api/write',methods=['POST'])
-def api_wirte():
-    #html에서 가져온 정보
-    data = request.json
-    # 현재 로그인 사용자 정보
-    writer = get_user()
-    # 글 작성
-    new_one = db.contents.insert_one({'user.nick':writer['nick'],'user._id':writer['_id'],'like':0,\
-    'comments':0,'write_time':dt.datetime.now().strftime("%Y년 %m월 %d일 %H시 %M분 %S초"),'write_edit_time':'','img':'','content':data['text_give']})
-    #글 작성한 것 가져오기 new_one사용 안됨
-    content = db.contents.find_one({'_id':new_one.inserted_id})
-    #response로 글 보냄
-    return jsonify( {'content': dumps(content)})
+#글 작성 화면이동
+@app.route('/new_write')
+def new_write():
+    # 로그인 되어있지 않으면 로그인창으로 보냄
+    logged = sign_in()
+    if logged == 'bad':
+        return redirect(url_for('login_page'))
+    return render_template('new_write.html')
+
+#마이페이지 이동
+@app.route('/my_main')
+def my_main():
+    # 로그인 되어있지 않으면 로그인창으로 보냄
+    logged = sign_in()
+    if logged == 'bad':
+        return redirect(url_for('login_page'))
+    user = get_user()
+    content_list = list(db.contents.find({}).sort([('write_time', -1)]))
+    selected_list = []
+    for i in content_list:
+        if i['user._id'] == ObjectId(user['_id']):
+            selected_list.append(i)
+
+
+    return render_template('my_main.html', contents=selected_list)
 
 @app.route('/api/delete',methods=['PUT'])
 def api_delete():
@@ -133,7 +144,26 @@ def api_delete():
         #같지 않다면 홈화면 보이게함 이건 나중에 수정
         return redirect(url_for('home'))
     db.contents.delete_one({'_id':one['_id']})
-    return redirect(url_for('home'))
+    return jsonify({'result':'success'})
+
+
+
+#글 작성
+@app.route('/api/write',methods=['POST'])
+def api_wirte():
+    #html에서 가져온 정보
+    data = request.json
+    # 현재 로그인 사용자 정보
+    writer = get_user()
+    # 글 작성
+    new_one = db.contents.insert_one({'user.nick':writer['nick'],'user._id':writer['_id'],'like':0,\
+    'comments':0,'write_time':dt.datetime.now().strftime("%Y년 %m월 %d일 %H시 %M분 %S초"),'write_edit_time':'','img':'','content':data['text_give']})
+    #글 작성한 것 가져오기 new_one사용 안됨
+    content = db.contents.find_one({'_id':new_one.inserted_id})
+
+    return jsonify( {'result': 'success'})
+
+
 
 
 
