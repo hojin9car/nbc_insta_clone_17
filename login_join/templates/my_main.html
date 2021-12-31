@@ -42,7 +42,7 @@
 
                     </div>
                     {#            글보이는 곳이 없길래 임시로   만듬      #}
-                    <div id="text-container">
+                    <div class="text-container">
                             <p>{{ content.content }}</p>
                         </div>
                     <div class="post-footer">
@@ -65,25 +65,40 @@
         </div>
     </div>
 <script>
-        const delBtn = document.querySelectorAll('.btn2')
-        if (delBtn){
-             for (i=0;i<delBtn.length;i++) {
-            delBtn[i].addEventListener('click', function (e) {
-                e.preventDefault()
-                const id = e.target.dataset.id
-                $.ajax({
-                    type: "PUT",
-                    url: `api/delete?id=${id}`,
-                    success: function (res) {
-                        if (res['result'] == 'success'){
-                              window.location.href = '/my_main'
-                        }
 
+     const editBtn = document.querySelectorAll('.btn1')
+        if (editBtn) {
+            for (i = 0; i < editBtn.length; i++) {
+                editBtn[i].addEventListener('click', function (e){
 
-                    }
+                    window.location.href = `/edit_write/${e.target.dataset.id}`
                 })
-            })
+            }
         }
+
+
+
+
+        const delBtn = document.querySelectorAll('.btn2')
+        if (delBtn) {
+            for (i = 0; i < delBtn.length; i++) {
+                delBtn[i].addEventListener('click', function (e) {
+                    e.preventDefault()
+                    const id = e.target.dataset.id
+                    $.ajax({
+                        type: "PUT",
+                        url: `api/delete?id=${id}`,
+                        success: function (res) {
+                            if (res['result'] == 'success') {
+                                window.location.href = '/my_main'
+                            }
+
+
+                        }
+                    })
+                })
+            }
+
         }
 
 

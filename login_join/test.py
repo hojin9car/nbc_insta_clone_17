@@ -55,9 +55,33 @@ def home():
         return redirect(url_for('login_page'))
     user = get_user()
     content_list = list(db.contents.find({}).sort([('write_time',-1)]))
+
     return render_template('home.html',contents=content_list)
 
+#글 수정 화면
+@app.route('/edit_write/<id>')
+def edit_write(id):
+    # 로그인 되어있지 않으면 로그인창으로 보냄
+    logged = sign_in()
 
+    if logged == 'bad':
+        return redirect(url_for('login_page'))
+    content = db.contents.find_one({'_id': ObjectId(id)})
+    return render_template('edit_write.html', content=content)
+
+#글 수정 화면
+@app.route('/api/edit',methods = ['POST'])
+def api_edit():
+    # 로그인 되어있지 않으면 로그인창으로 보냄
+    logged = sign_in()
+    if logged == 'bad':
+        return redirect(url_for('login_page'))
+    data = request.json
+    id = data['id']
+    text_area = data['text-area']
+
+    db.contents.update_one({'_id': ObjectId(id)},{ '$set': { 'content': text_area, 'write_edit_time': dt.datetime.now().strftime("%Y년 %m월 %d일 %H시 %M분 %S초")}} )
+    return jsonify({'result':'success'})
 
 
 #회원가입 페이지
@@ -134,6 +158,7 @@ def api_delete():
     user = get_user()
     #글에서 글 작성자 아이디를 가져옴
     id = request.args.get('id')
+    print(id)
     #가져온 id값은 str이므로 db에서 찾을 수가 없다. 따라서 ObjectId로 바꿔주어야함
     id = ObjectId(id)
     #글의 정보를 가져온 뒤 글의 작성자를 비교해야함
@@ -144,6 +169,7 @@ def api_delete():
         #같지 않다면 홈화면 보이게함 이건 나중에 수정
         return redirect(url_for('home'))
     db.contents.delete_one({'_id':one['_id']})
+
     return jsonify({'result':'success'})
 
 

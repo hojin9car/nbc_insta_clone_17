@@ -90,7 +90,30 @@ def my_main():
         if i['user._id'] == ObjectId(user['_id']):
             selected_list.append(i)
 
-
     return render_template('my_main.html', contents=selected_list)
 
+#글 수정 화면
+@app.route('/edit_write/<id>')
+def edit_write(id):
+    # 로그인 되어있지 않으면 로그인창으로 보냄
+    logged = sign_in()
+
+    if logged == 'bad':
+        return redirect(url_for('login_page'))
+    content = db.contents.find_one({'_id': ObjectId(id)})
+    return render_template('edit_write.html', content=content)
+
+#글 수정 화면
+@app.route('/api/edit',methods = ['POST'])
+def api_edit():
+    # 로그인 되어있지 않으면 로그인창으로 보냄
+    logged = sign_in()
+    if logged == 'bad':
+        return redirect(url_for('login_page'))
+    data = request.json
+    id = data['id']
+    text_area = data['text-area']
+
+    db.contents.update_one({'_id': ObjectId(id)},{ '$set': { 'content': text_area, 'write_edit_time': dt.datetime.now().strftime("%Y년 %m월 %d일 %H시 %M분 %S초")}} )
+    return jsonify({'result':'success'})
 
