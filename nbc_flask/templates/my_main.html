@@ -20,9 +20,11 @@
             {% for content in contents %}
             <div class="post-wrapper">
                 <div class="post-header">
-                     {#           회원 사진         #}
                     <img src="../static/img/xmas.jpg"/>
                     <p>{{ content['user.nick']}}</p>
+                        {#         btn id로 하면 안됨           #}
+                        <botton class="btn1" data-id={{ content['_id'] }}>수정</botton>
+                        <botton class="btn2" data-id={{ content['_id']}}>삭제</botton>
                 </div>
                 <div class="post-body">
                      {#          나중에 사진이 들어오면  content['img']          #}
@@ -62,5 +64,44 @@
         {% endif %}
         </div>
     </div>
+<script>
+
+     const editBtn = document.querySelectorAll('.btn1')
+        if (editBtn) {
+            for (i = 0; i < editBtn.length; i++) {
+                editBtn[i].addEventListener('click', function (e){
+
+                    window.location.href = `/edit_write/${e.target.dataset.id}`
+                })
+            }
+        }
+
+
+
+
+        const delBtn = document.querySelectorAll('.btn2')
+        if (delBtn) {
+            for (i = 0; i < delBtn.length; i++) {
+                delBtn[i].addEventListener('click', function (e) {
+                    e.preventDefault()
+                    const id = e.target.dataset.id
+                    $.ajax({
+                        type: "PUT",
+                        url: `api/delete?id=${id}`,
+                        success: function (res) {
+                            if (res['result'] == 'success') {
+                                window.location.href = '/my_main'
+                            }
+
+
+                        }
+                    })
+                })
+            }
+
+        }
+
+
+</script>
 </body>
 </html>

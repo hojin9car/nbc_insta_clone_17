@@ -32,10 +32,10 @@
                 </div>
                 <div id="footer">
                     <div id="icon-wrapper">
-                        <img src="../static/img/home@3x.png">
+                        <img src="../static/img/home@3x.png" onclick="location.href ='/'">
                         <img src="../static/img/favorite@3x.png">
-                        <img src="../static/img/trending@3x.png">
-                        <img src="../static/img/home@3x.png">
+                        <img src="../static/img/trending@3x.png" onclick="location.href ='/new_write'">
+                        <img src="../static/img/home@3x.png" onclick="location.href ='/my_main'">
                     </div>
                 </div>
             </div>
@@ -54,7 +54,7 @@
                 data:JSON.stringify({"text_give": text}),
                 success: function(res){
                     if(res.result == 'success'){
-                         window.location.href ='/home'
+                         window.location.href ='/'
                     }
 
                 }

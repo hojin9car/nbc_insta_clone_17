@@ -21,6 +21,18 @@ SECRET_KEY = 'sparta'
 
 bp = Blueprint("auth", __name__)
 
+#아이디 중복확인
+@bp.route('/api/isit')
+def id_isit():
+    id = request.args.get('id')
+    is_it = db.user.find_one({'id':id})
+
+    if is_it:
+        return jsonify({'result': 'fail', 'msg': '아이디가 이미 존재 합니다.'})
+    else:
+        return jsonify({'result': 'success', 'msg': '사용하셔도 좋습니다.'})
+
+
 
 def login_required(f):
     @wraps(f)
