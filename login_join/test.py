@@ -56,7 +56,7 @@ def home():
     user = get_user()
     content_list = list(db.contents.find({}).sort([('write_time',-1)]))
 
-    return render_template('home.html',contents=content_list)
+    return render_template('index.html',contents=content_list)
 
 #글 수정 화면
 @app.route('/edit_write/<id>')
