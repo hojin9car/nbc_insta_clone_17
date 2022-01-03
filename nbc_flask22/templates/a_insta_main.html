@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block script %}
+    <script>
+        $(document).ready(function () {
+            listing();
+            localStorage.clear() {# 브라우저 스토리지에 저장된 상세페이지 정보 삭제 #}
+        });
+
+        function readImage(uid) {
+            var result = ''
+            $.ajax({
+                type: 'GET',
+                url: '/api/read_image/' + uid,
+                async: false,
+                success(response) {
+                    result += response
+                }
+            });
+            return result
+        }
+
+        function listing() {
+            $('#post-container').empty()
+            $.ajax({
+                type: 'GET',
+                url: '/api/read_contents',
+                success: function (response) {
+                    let rows = response['data']
+                    for (let i = 0; i < rows.length; i++) {
+                        let uuid = rows[i]['uuid']
+                        let detail_locate = '/detail/' + uuid
+                        console.log(detail_locate)
+                        let text = rows[i]['content']
+                        let write_time = rows[i]['write_time']
+                        let nick = rows[i]['user_nick']
+                        let image = 'data:image/png;base64,' + readImage(uuid)
+                        {#console.log(readImage(uuid))#}
+                        let temp_html =
+                            `
+                    <div class="post-wrapper">
+                        <div class="post-header">
+                            <div class="left-wrapper">
+                                <img src="../static/img/xmas.jpg"/>
+                                <p>${nick}</p>
+                            </div>
+                            <div class="right-wrapper">
+
+                            </div>
+                        </div>
+                        <div class="post-body">
+                            <img id="mainImg" src="${image}" onclick="location.href='${detail_locate}'">
+                            <div class="post-icons-wrapper">
+                                <div class="left-wrapper">
+                                    <!-- 아이콘 크기가 달라서 부득이 하게 이렇게 만들었으나, 클래스 없이 img로 처리하는게 맞습니다! -->
+                                    <img class="post-icon" src="../static/img/like@3x.png">
+                                    <img class="post-icon-2" src="../static/img/comment@3x.png" onclick="location.href='${detail_locate}'">
+                                    <img class="post-icon" src="../static/img/dm@3x.png">
+                                </div>
+                                <div class="right-wrapper">
+                                    <img src="../static/img/favorite@3x.png">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="post-footer">
+                            <div class="post-like-wrapper">
+                                <img src="../static/img/xmas.jpg">
+                                <p><strong>이용자</strong>님 <strong>외 6,671명</strong>이 좋아합니다</p>
+                            </div>
+                            <div class="post-content-wrapper">
+                                <p class="post-author">${nick}</p>
+                                <p class="post-content">${text}</p>
+                            </div>
+                            <p class="post-time">
+                                ${write_time}
+                            </p>
+                        </div>
+                    </div>`
+
+                        $('#post-container').append(temp_html)
+                    }
+                }
+            })
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="post-container">
+
+    </div>
+{% endblock %}

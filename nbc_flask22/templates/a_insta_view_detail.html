@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block script %}
+    <script>
+        $(document).ready(function () {
+            listing();
+        });
+
+        function readImage(uuid) {
+            var result = ''
+            $.ajax({
+                type: 'GET',
+                url: '/api/read_image/' + uuid,
+                async: false,
+                success(response) {
+                    result += response
+                }
+            });
+            return result
+        }
+
+        let uuid = '{{ content.uuid }}'
+        localStorage.setItem('uuid', uuid)
+
+        function listing() {
+            var image = 'data:image/png;base64,' + readImage(uuid)
+            localStorage.setItem('img', image)
+            document.getElementById('mainImg').src = image
+        }
+
+        function locate_edit(uuid) {
+            let url = '/edit_write/' + uuid
+            location.href = url
+        }
+
+        function delete_content(uuid) {
+            $.ajax({
+                type: "PUT",
+                url: `/api/delete?uuid=${uuid}`,
+                success(response) {
+                    location.href = '/'
+                }
+            })
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="post-container">
+        <div class="post-wrapper">
+            <div class="post-header">
+                <div class="left-wrapper">
+                    <img src="../static/img/xmas.jpg"/>
+                    <p>{{ content.user_ncik }}</p>
+                </div>
+                <div class="right-wrapper">
+                    <button onclick="locate_edit('{{ content.uuid }}')">수정</button>
+                    <button onclick="delete_content('{{ content.uuid }}')">삭제</button>
+                </div>
+            </div>
+            <div class="post-body">
+                <img id="mainImg" src="#">
+                <div class="post-icons-wrapper">
+                    <div class="left-wrapper">
+                        <img class="post-icon" src="../static/img/like@3x.png">
+                        <img class="post-icon-2" src="../static/img/comment@3x.png">
+                        <img class="post-icon" src="../static/img/dm@3x.png">
+                    </div>
+                    <div class="right-wrapper">
+                        <img src="../static/img/favorite@3x.png">
+                    </div>
+                </div>
+            </div>
+            <div class="post-footer">
+                <div class="post-like-wrapper">
+                    <img src="../static/img/xmas.jpg">
+                    <p><strong>이용자</strong>님 <strong>외 6,671명</strong>이 좋아합니다</p>
+                </div>
+                <div class="post-content-wrapper">
+                    <p class="post-author">{{ content.user_nick }}</p>
+                    <p class="post-content">{{ content.content }}</p>
+                </div>
+                <p class="post-time">
+                    {{ content.write_time }}
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

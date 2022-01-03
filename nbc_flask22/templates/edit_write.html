@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="../static/css/edit_write.css">
+    <title>𝓑𝓾𝓰𝓼𝓽𝓪𝓰𝓻𝓪𝓶</title>
+</head>
+
+<body>
+    <div id="main">
+        <div id="header">
+            <img id="header-logo" src="../static/img/logo_bugstagram.png"/>
+        </div>
+        <div id="post-container">
+            <div class="post-wrapper">
+                <div class="post-header">
+                    <img src="../static/img/xmas.jpg"/>
+                    <p>{{ content['user.nick'] }}</p>
+                        <botton id="btn1" data-id={{ content['_id']}}>완료</botton>
+                </div>
+                <div class="post-body">
+                    <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FrMszs%2FbtroXNvCfuU%2FYbcW6gFsFHxwV0NX4LLsA0%2Fimg.png">
+                    <div class="post-body-icons-wrapper">
+                        <div class="left-wrapper">
+                            <img src="../static/img/like@3x.png">
+                        </div>
+                        <p>0000명이 좋아합니다</p>
+                        <div class="right-wrapper">
+                            <img src="../static/img/comment@3x.png">
+                        </div>
+                    </div>
+                    <div id="user-write">
+                    <div id="edit-box">
+                    {#           나중에 이미지가 들어갈 자리         #}
+                        <textarea id="text-area" class="textarea">{{ content.content }}</textarea>
+                    </div>
+                    </div>
+                    <div class="post-footer">
+                        <img src="../static/img/xmas.jpg"/>
+                        <p>여기엔 댓글이 들어갑니다</p>
+                    </div>
+                </div>
+                <div id="footer">
+                    <div id="icon-wrapper">
+                        <img src="../static/img/home@3x.png" onclick="location.href ='/'">
+                        <img src="../static/img/favorite@3x.png">
+                        <img src="../static/img/trending@3x.png" onclick="location.href ='/new_write'">
+                        <img src="../static/img/home@3x.png" onclick="location.href ='/my_main'">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        c
+    </script>
+</body>
+</html>

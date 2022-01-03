@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block script %}
+    <script>
+        function posting() {
+            let text = $('#text-area').val()
+            let file = $('#file')[0].files[0]
+            let form_data = new FormData()
+
+            form_data.append("text_give", text)
+            form_data.append("file_give", file)
+
+            $.ajax({
+                type: "POST",
+                url: "/api/write",
+                data: form_data,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    alert(response["result"])
+                    window.location.href = '/'
+                }
+            });
+        }
+
+        var loadFile = function (event) {
+            var output = document.getElementById('preview');
+            output.src = URL.createObjectURL(event.target.files[0]);
+            output.onload = function () {
+                URL.revokeObjectURL(output.src) // free memory
+            }
+        };
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="post-body">
+        <img id="preview" src="#" alt="미리보기">
+    </div>
+    <div>
+        <input type="file" id="file" accept="image/*" onchange="loadFile(event)">
+    </div>
+    <div class="post-body">
+            <textarea id="text-area" placeholder="내용을 입력해주세요!"></textarea>
+    </div>
+    <div style="text-align: center">
+        <button onclick="posting()">등록하기</button>
+    </div>
+
+{% endblock %}

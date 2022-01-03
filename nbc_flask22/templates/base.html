@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/style_mobile_ans.css">
+    <title>Instagram</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    {% block script %}
+    {% endblock %}
+</head>
+<body>
+<div id="main">
+    <div id="header">
+        <img class="header-icon" src="../static/img/camera@3x.png"/>
+        <img id="logo" src="../static/img/insta-logo.png"/>
+        <img class="header-icon" src="../static/img/dm@3x.png"/>
+    </div>
+    <div id="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+    <div id="footer">
+        <div id="icon-wrapper">
+            <img src="../static/img/home@3x.png" onclick="location.href ='/'">
+            <img src="../static/img/search@3x.png">
+            <img src="../static/img/trending@3x.png" onclick="location.href ='/new_write'">
+            <img src="../static/img/home@3x.png" onclick="location.href ='/my_main'">
+        </div>
+    </div>
+</div>
+</body>
+</html>
