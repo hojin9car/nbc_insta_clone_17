@@ -7,7 +7,14 @@
     <link rel="stylesheet" href="../static/css/style_mobile_ans.css">
     <title>Instagram</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <script>
+        function logout() {
+            $.removeCookie('token', {path: '/'});
+            window.location.href = '/'
+        }
+    </script>
     {% block script %}
     {% endblock %}
 </head>
@@ -16,7 +23,7 @@
     <div id="header">
         <img class="header-icon" src="../static/img/camera@3x.png"/>
         <img id="logo" src="../static/img/insta-logo.png"/>
-        <img class="header-icon" src="../static/img/dm@3x.png"/>
+        <img class="header-icon" src="../static/img/dm@3x.png" onclick="logout()"/>
     </div>
     <div id="container">
         {% block content %}
