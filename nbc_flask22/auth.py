@@ -137,7 +137,7 @@ def login_github():
     # 토큰 생성후 쿠키 부여
     payload = {'id': user_info['id']}
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
-    resp = make_response(redirect(url_for('post.home')))
+    resp = make_response(redirect('/'))
     resp.set_cookie('token', token)
     return resp
 
@@ -145,7 +145,7 @@ def login_github():
 @bp.route('/login/kakao')
 def login_kakao():
     code = request.args.get('code')
-    redirect_uri = 'http://localhost:5000/login/kakao'
+    redirect_uri = 'http://hojin9car.shop//login/kakao'
     client_id = '7f535c9ad05fa8ee370a9eb9318421c7'
     url = "https://kauth.kakao.com/oauth/token"
     headers = {'Content-type': 'application/x-www-form-urlencoded'}
@@ -174,6 +174,6 @@ def login_kakao():
     # 토큰 생성후 쿠키 부여
     payload = {'id': user_info['id']}
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
-    resp = make_response(redirect(url_for('post.home')))
+    resp = make_response(redirect(url_for('/')))
     resp.set_cookie('token', token)
     return resp
