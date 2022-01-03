@@ -168,8 +168,23 @@ def read_image(uid):
 
 @bp.route('/api/read_contents', methods=['GET'])
 def read_contents():
+    #유저 정보 불러옴
+    user = get_user()
     content_list = list(dbe.contents.find({}, {'_id': False}).sort([('write_time', -1)]))
-    # print(content_list)
+    # likes의 uuid와 콘텐츠의 uuid가 같은 것을 찾음
+    for content in content_list:
+        contents_like = dbe.likes.find_one({'uuid':content['uuid']}, {'_id': False})
+        # liker의 값이 0보다 크다면 즉 누가 댓글을 달았다면
+        if contents_like and len(contents_like['liker']) > 0:
+            #content에 아래와 같은 값을 추가
+            content['likes'] = contents_like['liker']
+            content['count_num'] = len(contents_like['liker'])
+            content['first_click'] = contents_like['liker'][0]
+            #이건 내가 좋아요 눌른 게시물인지 확인하기 위해서
+            if user['nick'] in contents_like['liker']:
+                content['my_click'] = True
+
+
     return jsonify({'data': content_list})
 
 
@@ -179,3 +194,21 @@ def view_detail(uuid):
     # print('fef3== ', content)
     return render_template('a_insta_view_detail.html', content=content)
 
+@bp.route('/api/like/<uid>')
+def like(uid):
+    # 좋아요 테이블 찾아옴
+    like_table = dbe.likes.find_one({'uuid': uid})
+    user = get_user()
+    if user['nick'] in like_table['liker']:
+        new_liker = like_table['liker']
+        new_liker.remove(user['nick'])
+        dbe.likes.update_one({'uuid': uid}, {'$set': {'liker': new_liker}})
+        return jsonify({'result':'cancle'})
+
+    new_liker = like_table['liker']
+    new_liker.append(user['nick'])
+    dbe.likes.update_one({'uuid': uid}, {'$set' : { 'liker': new_liker }})
+
+
+
+    return jsonify({'result':'success'})

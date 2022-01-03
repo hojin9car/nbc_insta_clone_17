@@ -115,7 +115,10 @@ body {
   font-weight: bold;
   font-size: 14px;
 }
-
+/*i {*/
+/*  width: 14%;*/
+/*  height: 100%;*/
+/*}*/
 /* 포스트 - 바디 */
 .post-body img {
   width: 100%;

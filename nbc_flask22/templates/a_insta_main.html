@@ -4,7 +4,29 @@
         $(document).ready(function () {
             listing();
             localStorage.clear() {# 브라우저 스토리지에 저장된 상세페이지 정보 삭제 #}
-        });
+
+            const likeBtns = document.querySelectorAll('.like')
+            for (i=0;i<likeBtns.length;i++){
+                likeBtns[i].addEventListener('click',function (e){
+                    const uid = e.target.dataset.id
+                    console.log('clicked')
+                    $.ajax({
+                        type: 'GET',
+                        url: '/api/like/' + uid,
+                        success(res) {
+                            if (res.result == 'cancle'){
+                                alert('좋아요를 취소하셨습니다.')
+                                window.location.reload('/')
+                            }
+                            else if (res.result == 'success'){
+                                alert('좋아요를 누르셨습니다.')
+                                window.location.reload('/')
+                            }
+                        }
+                    });
+                })
+            }
+        })
 
         function readImage(uid) {
             var result = ''
@@ -24,9 +46,16 @@
             $.ajax({
                 type: 'GET',
                 url: '/api/read_contents',
+                async: false,
                 success: function (response) {
                     let rows = response['data']
                     for (let i = 0; i < rows.length; i++) {
+                        let likeList
+                        let countNum
+                        let first
+                        let a
+                        let c
+                        let myClick
                         let uuid = rows[i]['uuid']
                         let detail_locate = '/detail/' + uuid
                         console.log(detail_locate)
@@ -34,6 +63,31 @@
                         let write_time = rows[i]['write_time']
                         let nick = rows[i]['user_nick']
                         let image = 'data:image/png;base64,' + readImage(uuid)
+                        {#받아온 데이터에서 likes가 있다는 말은 아래의 값이 있다는 말#}
+                        if (rows[i].likes){
+                            likeList = rows[i].likes
+                            countNum = rows[i].count_num
+                            first = rows[i].first_click
+                            myClick = rows[i].my_click
+                            {#만약 myClick이 True라면 색칠한 하트를 보여줌#}
+                            if (myClick){
+
+                                c = `<i class="fas fa-heart fa-3x like" data-id="${uuid}" style="margin: 2% 4%; color: deeppink" ></i>`
+                            }
+                            {#만약 좋아요가 눌린 상태라면 아래와 같은 글을 보여줌#}
+                            a = `<div class="post-like-wrapper">
+                                                        <img src="../static/img/xmas.jpg">
+                                                        <p><strong>${first}</strong>님 <strong>외 ${countNum - 1}</strong>이 좋아합니다</p>
+                                                    </div>`
+
+                        }
+
+                        {# 좋아요 개수가 없다면 b를 출력 만약 내가 좋아요를 누르지 않았다면 d를 출력#}
+                        const b = `<div class="post-like-wrapper">
+                                                        <p><strong>가장먼저 좋아요를 눌러보세요</strong></p>
+                                                    </div>`
+                        const d = `<i class="far fa-heart fa-3x like" data-id="${uuid}" style="margin: 2% 4%;" ></i>`
+
                         {#console.log(readImage(uuid))#}
                         let temp_html =
                             `
@@ -52,7 +106,9 @@
                             <div class="post-icons-wrapper">
                                 <div class="left-wrapper">
                                     <!-- 아이콘 크기가 달라서 부득이 하게 이렇게 만들었으나, 클래스 없이 img로 처리하는게 맞습니다! -->
-                                    <img class="post-icon" src="../static/img/like@3x.png">
+                                    <!-- <img class="post-icon" src="../static/img/like@3x.png"> -->
+
+                                    ${c || d}
                                     <img class="post-icon-2" src="../static/img/comment@3x.png" onclick="location.href='${detail_locate}'">
                                     <img class="post-icon" src="../static/img/dm@3x.png">
                                 </div>
@@ -62,10 +118,12 @@
                             </div>
                         </div>
                         <div class="post-footer">
-                            <div class="post-like-wrapper">
+                            <!-- <div class="post-like-wrapper">
                                 <img src="../static/img/xmas.jpg">
                                 <p><strong>이용자</strong>님 <strong>외 6,671명</strong>이 좋아합니다</p>
-                            </div>
+                            </div> -->
+                            ${a || b}
+
                             <div class="post-content-wrapper">
                                 <p class="post-author">${nick}</p>
                                 <p class="post-content">${text}</p>
@@ -75,6 +133,8 @@
                             </p>
                         </div>
                     </div>`
+
+
 
                         $('#post-container').append(temp_html)
                     }
