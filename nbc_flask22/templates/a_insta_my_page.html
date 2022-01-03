@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% block logo %}
+    <img id="logo" src="../static/img/logo_mypage.png"/>
+{% endblock %}
 {% block script %}
     <script>
         $(document).ready(function () {
@@ -110,7 +113,7 @@
                             <p class="post-content">{{content.content}}</p>
                         </div>
                         <p class="post-time">
-                            {{write_time}}
+                            {{content.write_time}}
                         </p>
                     </div>
                 </div>

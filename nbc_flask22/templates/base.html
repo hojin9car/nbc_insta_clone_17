@@ -23,7 +23,9 @@
 <div id="main">
     <div id="header">
         <img class="header-icon" src="../static/img/camera@3x.png"/>
-        <img id="logo" src="../static/img/insta-logo.png"/>
+        {% block logo %}
+        {% endblock %}
+
         <img class="header-icon" src="../static/img/dm@3x.png" onclick="logout()"/>
     </div>
     <div id="container">
