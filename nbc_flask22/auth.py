@@ -145,7 +145,7 @@ def login_github():
 @bp.route('/login/kakao')
 def login_kakao():
     code = request.args.get('code')
-    redirect_uri = 'http://hojin9car.shop//login/kakao'
+    redirect_uri = 'http://hojin9car.shop/login/kakao'
     client_id = '7f535c9ad05fa8ee370a9eb9318421c7'
     url = "https://kauth.kakao.com/oauth/token"
     headers = {'Content-type': 'application/x-www-form-urlencoded'}
