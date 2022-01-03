@@ -3,6 +3,27 @@
     <script>
         $(document).ready(function () {
             listing();
+            const likeBtns = document.querySelectorAll('.like')
+            for (i=0;i<likeBtns.length;i++){
+                likeBtns[i].addEventListener('click',function (e){
+                    const uid = e.target.dataset.id
+                    console.log('clicked')
+                    $.ajax({
+                        type: 'GET',
+                        url: '/api/like/' + uid,
+                        success(res) {
+                            if (res.result == 'cancle'){
+                                alert('좋아요를 취소하셨습니다.')
+                                window.location.reload()
+                            }
+                            else if (res.result == 'success'){
+                                alert('좋아요를 누르셨습니다.')
+                                window.location.reload()
+                            }
+                        }
+                    });
+                })
+            }
         });
 
         function readImage(uid) {
@@ -25,17 +46,12 @@
                 async: false,
                 success: function (response) {
                     let rows = response['result']
-                    {#console.log(rows)#}
                     for (let i in rows) {
                         let img = rows[i]['img']
                         let uuid = rows[i]['uuid']
-                        {#console.log(uuid)#}
-                        let detail_locate = '/detail/' + uuid
                         let image = 'data:image/png;base64,' + readImage(uuid)
-                        console.log(image)
-                        {#console.log(img)#}
-                        let temp_html = `<img src = "${image}" onclick="location.href='${detail_locate}'">`
-                        $('#my_content_wrapper').append(temp_html)
+
+                        $(`.${img}`).attr("src", image);
                     }
                 }
             })
@@ -49,6 +65,57 @@
     <h1>마이페이지</h1>
     </div>
     <div id="my_content_wrapper">
+    </div>
+    <div id="post-container">
+    {% if contents %}
+            {% for content in contents %}
+                <div class="post-wrapper">
+                    <div class="post-header">
+                        <div class="left-wrapper">
+                            <img src="../static/img/xmas.jpg"/>
+                            <p>{{content.user_nick}}</p>
+                        </div>
+                        <div class="right-wrapper">
+
+                        </div>
+                    </div>
+                    <div class="post-body">
+                        <img id="mainImg" src class="{{ content.img }}" onclick="location.href='/detail/{{ content.uuid }}'">
+                        <div class="post-icons-wrapper">
+                            <div class="left-wrapper">
+                                {% if content.my_click %}
+                                     <i class="fas fa-heart fa-3x like" data-id="{{content.uuid}}" style="margin: 2% 4%; color: deeppink" ></i>
+                                {% else %}
+                                    <i class="far fa-heart fa-3x like" data-id="{{ content.uuid }}" style="margin: 2% 4%;" ></i>
+                                {% endif %}
+                                <img class="post-icon-2" src="../static/img/comment@3x.png" onclick="location.href='/detail/{{ content.uuid }}'">
+                                <img class="post-icon" src="../static/img/dm@3x.png">
+                            </div>
+                            <div class="right-wrapper">
+                                <img src="../static/img/favorite@3x.png">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post-footer">
+                        <div class="post-like-wrapper">
+                            {% if content.likes %}
+                                <img src="../static/img/xmas.jpg">
+                                <p><strong>{{ content.first_click }}</strong>님 <strong>외 {{ content.count_num - 1}}</strong>명이 좋아합니다</p>
+                            {% else %}
+                                <p><strong>가장먼저 좋아요를 눌러보세요</strong></p>
+                            {% endif %}
+                        </div>
+                        <div class="post-content-wrapper">
+                            <p class="post-author">{{content.user_nick}}</p>
+                            <p class="post-content">{{content.content}}</p>
+                        </div>
+                        <p class="post-time">
+                            {{write_time}}
+                        </p>
+                    </div>
+                </div>
+            {% endfor %}
+    {% endif %}
     </div>
 {% endblock %}
 
