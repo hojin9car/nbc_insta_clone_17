@@ -21,6 +21,7 @@ bp = Blueprint("post", __name__)
 dbe = db.get_db()
 fs = gridfs.GridFS(dbe)
 
+
 # 글 쓰는 화면으로 이동
 @bp.route('/new_write')
 @login_required
@@ -33,7 +34,6 @@ def new_write():
 @login_required
 def api_wirte():
     if request.method == 'POST':
-
         # html에서 가져온 정보
         text = request.form['text_give']
         file = request.files['file_give']
@@ -111,7 +111,7 @@ def api_edit_v1():
     writer = get_user()
 
     dbe.contents.update_one({'uuid': uuid}, {
-            '$set': {'content': text, 'write_edit_time': dt.datetime.now().strftime("%Y년 %m월 %d일 %H시 %M분 %S초")}})
+        '$set': {'content': text, 'write_edit_time': dt.datetime.now().strftime("%Y년 %m월 %d일 %H시 %M분 %S초")}})
 
     return jsonify({'result': 'success'})
 
@@ -132,7 +132,8 @@ def api_edit_v2():
     fs_img_id = str(fs.put(file))
     print(fs_img_id)
     dbe.contents.update_one({'uuid': uuid}, {
-            '$set': {'content': text, 'img': fs_img_id, 'write_edit_time': dt.datetime.now().strftime("%Y년 %m월 %d일 %H시 %M분 %S초")}})
+        '$set': {'content': text, 'img': fs_img_id,
+                 'write_edit_time': dt.datetime.now().strftime("%Y년 %m월 %d일 %H시 %M분 %S초")}})
 
     return jsonify({'result': 'success'})
 
@@ -168,22 +169,21 @@ def read_image(uid):
 
 @bp.route('/api/read_contents', methods=['GET'])
 def read_contents():
-    #유저 정보 불러옴
+    # 유저 정보 불러옴
     user = get_user()
     content_list = list(dbe.contents.find({}, {'_id': False}).sort([('write_time', -1)]))
     # likes의 uuid와 콘텐츠의 uuid가 같은 것을 찾음
     for content in content_list:
-        contents_like = dbe.likes.find_one({'uuid':content['uuid']}, {'_id': False})
+        contents_like = dbe.likes.find_one({'uuid': content['uuid']}, {'_id': False})
         # liker의 값이 0보다 크다면 즉 누가 댓글을 달았다면
         if contents_like and len(contents_like['liker']) > 0:
-            #content에 아래와 같은 값을 추가
+            # content에 아래와 같은 값을 추가
             content['likes'] = contents_like['liker']
             content['count_num'] = len(contents_like['liker'])
             content['first_click'] = contents_like['liker'][0]
-            #이건 내가 좋아요 눌른 게시물인지 확인하기 위해서
+            # 이건 내가 좋아요 눌른 게시물인지 확인하기 위해서
             if user['nick'] in contents_like['liker']:
                 content['my_click'] = True
-
 
     return jsonify({'data': content_list})
 
@@ -206,6 +206,7 @@ def view_detail(uuid):
     # print('fef3== ', content)
     return render_template('a_insta_view_detail.html', content=content)
 
+
 @bp.route('/api/like/<uid>')
 def like(uid):
     # 좋아요 테이블 찾아옴
@@ -215,12 +216,10 @@ def like(uid):
         new_liker = like_table['liker']
         new_liker.remove(user['nick'])
         dbe.likes.update_one({'uuid': uid}, {'$set': {'liker': new_liker}})
-        return jsonify({'result':'cancle'})
+        return jsonify({'result': 'cancle'})
 
     new_liker = like_table['liker']
     new_liker.append(user['nick'])
-    dbe.likes.update_one({'uuid': uid}, {'$set' : { 'liker': new_liker }})
+    dbe.likes.update_one({'uuid': uid}, {'$set': {'liker': new_liker}})
 
-
-
-    return jsonify({'result':'success'})
+    return jsonify({'result': 'success'})

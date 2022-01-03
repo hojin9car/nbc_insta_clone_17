@@ -1,9 +1,54 @@
 {% extends 'base.html' %}
 {% block script %}
+    <script>
+        $(document).ready(function () {
+            listing();
+        });
 
+        function readImage(uid) {
+            var result = ''
+            $.ajax({
+                type: 'GET',
+                url: '/api/read_image/' + uid,
+                async: false,
+                success(response) {
+                    result += response
+                }
+            });
+            return result
+        }
+
+        function listing() {
+            $.ajax({
+                type: 'GET',
+                url: '/api/my_page',
+                async: false,
+                success: function (response) {
+                    let rows = response['result']
+                    {#console.log(rows)#}
+                    for (let i in rows) {
+                        let img = rows[i]['img']
+                        let uuid = rows[i]['uuid']
+                        {#console.log(uuid)#}
+                        let detail_locate = '/detail/' + uuid
+                        let image = 'data:image/png;base64,' + readImage(uuid)
+                        console.log(image)
+                        {#console.log(img)#}
+                        let temp_html = `<img src = "${image}" onclick="location.href='${detail_locate}'">`
+                        $('#my_content_wrapper').append(temp_html)
+                    }
+                }
+            })
+        }
+    </script>
 {% endblock %}
 
 {% block content %}
-
+    <div id="profile_mypage">
+        <img src="../static/img/xmas.jpg" alt="프로필사진">
+    <h1>마이페이지</h1>
+    </div>
+    <div id="my_content_wrapper">
+    </div>
 {% endblock %}
 
