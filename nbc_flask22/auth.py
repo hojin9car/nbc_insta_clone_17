@@ -174,6 +174,6 @@ def login_kakao():
     # 토큰 생성후 쿠키 부여
     payload = {'id': user_info['id']}
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
-    resp = make_response(redirect(url_for('/')))
+    resp = make_response(redirect('/'))
     resp.set_cookie('token', token)
     return resp
