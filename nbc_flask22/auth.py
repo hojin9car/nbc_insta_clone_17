@@ -54,6 +54,7 @@ def get_user():
     token_receive = request.cookies.get('token')
     user_info = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
     user = db.user.find_one({'id': user_info['id']})
+    print('user', user)
     return user
 
 

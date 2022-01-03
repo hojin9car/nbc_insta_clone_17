@@ -44,7 +44,7 @@ def api_wirte():
         fs_img_id = str(fs.put(file))
 
         uid = str(uuid.uuid4())
-        print(uid)
+        # print(uid)
         # 글 작성
         dbe.contents.insert_one({
             'user_nick': writer['nick'],
@@ -76,23 +76,24 @@ def api_delete():
 
     # 글에서 글 작성자 아이디를 가져옴
     uid = request.args.get('uuid')
-    print('i9i9i9i9', uid)
+    # print('i9i9i9i9', uid)
     # 가져온 id값은 str이므로 db에서 찾을 수가 없다. 따라서 ObjectId로 바꿔주어야함
     # id = ObjectId(id)
 
     # 글의 정보를 가져온 뒤 글의 작성자를 비교해야함
     one = dbe.contents.find_one({'uuid': uid})
     # print(one['_id'])
-    print(one)
+    # print(one)
     # 현재 로그인 사용자와 글작성자가 같아야지 진행이 가능
     # print(one['user_id'], user['_id'])
-    # if one['user_id'] != user['_id']:
-    #     # 같지 않다면 홈화면 보이게함 이건 나중에 수정
-    #     return redirect(url_for('post.home'))
-
-    dbe.contents.delete_one({'uuid': str(uid)})
-    dbe.comments.delete_one({'uuid': str(uid)})
-    dbe.likes.delete_one({'uuid': str(uid)})
+    if one['user_id'] != user['_id']:
+        # 같지 않다면 홈화면 보이게함 이건 나중에 수정
+        # return redirect(url_for('post.home'))
+        return render_template('a_insta_main.html')
+    else:
+        dbe.contents.delete_one({'uuid': str(uid)})
+        dbe.comments.delete_one({'uuid': str(uid)})
+        dbe.likes.delete_one({'uuid': str(uid)})
 
     return jsonify({'result': 'success'})
 
@@ -130,7 +131,7 @@ def api_edit_v2():
     writer = get_user()
 
     fs_img_id = str(fs.put(file))
-    print(fs_img_id)
+    # print(fs_img_id)
     dbe.contents.update_one({'uuid': uuid}, {
         '$set': {'content': text, 'img': fs_img_id,
                  'write_edit_time': dt.datetime.now().strftime("%Y년 %m월 %d일 %H시 %M분 %S초")}})
@@ -192,6 +193,12 @@ def read_contents():
 def view_detail(uuid):
     user = get_user()
     content = (dbe.contents.find_one({'uuid': uuid}))
+    # print('content', content)
+    if str(user['_id']) != content['user_id']:
+        auth_data = False
+    else:
+        auth_data = True
+    auth_json = json.dumps(auth_data)
     contents_like = dbe.likes.find_one({'uuid': uuid}, {'_id': False})
     # liker의 값이 0보다 크다면 즉 누가 댓글을 달았다면
     if contents_like and len(contents_like['liker']) > 0:
@@ -202,9 +209,7 @@ def view_detail(uuid):
         # 이건 내가 좋아요 눌른 게시물인지 확인하기 위해서
         if user['nick'] in contents_like['liker']:
             content['my_click'] = True
-
-    # print('fef3== ', content)
-    return render_template('a_insta_view_detail.html', content=content)
+    return render_template('a_insta_view_detail.html', content=content, auth=auth_json)
 
 
 @bp.route('/api/like/<uid>')
