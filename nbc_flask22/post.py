@@ -190,7 +190,19 @@ def read_contents():
 
 @bp.route('/detail/<uuid>', methods=['GET'])
 def view_detail(uuid):
+    user = get_user()
     content = (dbe.contents.find_one({'uuid': uuid}))
+    contents_like = dbe.likes.find_one({'uuid': uuid}, {'_id': False})
+    # liker의 값이 0보다 크다면 즉 누가 댓글을 달았다면
+    if contents_like and len(contents_like['liker']) > 0:
+        # content에 아래와 같은 값을 추가
+        content['likes'] = contents_like['liker']
+        content['count_num'] = len(contents_like['liker'])
+        content['first_click'] = contents_like['liker'][0]
+        # 이건 내가 좋아요 눌른 게시물인지 확인하기 위해서
+        if user['nick'] in contents_like['liker']:
+            content['my_click'] = True
+
     # print('fef3== ', content)
     return render_template('a_insta_view_detail.html', content=content)
 
