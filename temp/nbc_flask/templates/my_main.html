@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="../static/css/my_main.css">
+    <title>𝓑𝓾𝓰𝓼𝓽𝓪𝓰𝓻𝓪𝓶</title>
+</head>
+
+<body>
+    <div id="main">
+        <div id="header">
+            <img id="header-logo" src="../static/img/logo_bugstagram.png"/>
+        </div>
+        <div id="post-container">
+        {% if contents %}
+            {% for content in contents %}
+            <div class="post-wrapper">
+                <div class="post-header">
+                    <img src="../static/img/xmas.jpg"/>
+                    <p>{{ content['user.nick']}}</p>
+                        {#         btn id로 하면 안됨           #}
+                        <botton class="btn1" data-id={{ content['_id'] }}>수정</botton>
+                        <botton class="btn2" data-id={{ content['_id']}}>삭제</botton>
+                </div>
+                <div class="post-body">
+                     {#          나중에 사진이 들어오면  content['img']          #}
+                    <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FrMszs%2FbtroXNvCfuU%2FYbcW6gFsFHxwV0NX4LLsA0%2Fimg.png">
+                    <div class="post-body-icons-wrapper">
+                        <div class="left-wrapper">
+                            <img src="../static/img/like@3x.png">
+                        </div>
+                        {#       나중에 content['like']                 #}
+                        <p>0000명이 좋아합니다</p>
+                        <div class="right-wrapper">
+                            <img src="../static/img/favorite@3x.png">
+                            <img src="../static/img/comment@3x.png">
+                        </div>
+
+                    </div>
+                    {#            글보이는 곳이 없길래 임시로   만듬      #}
+                    <div class="text-container">
+                            <p>{{ content.content }}</p>
+                        </div>
+                    <div class="post-footer">
+                        <img src="../static/img/xmas.jpg"/>
+                         {#       나중에 content['comment']                 #}
+                        <p>여기엔 댓글이 들어갑니다</p>
+                    </div>
+                </div>
+                <div id="footer">
+                    <div id="icon-wrapper">
+                        <img src="../static/img/home@3x.png" onclick="location.href ='/'">
+                        <img src="../static/img/favorite@3x.png">
+                        <img src="../static/img/trending@3x.png" onclick="location.href ='/new_write'">
+                        <img src="../static/img/home@3x.png" onclick="location.href ='/my_main'">
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+        </div>
+    </div>
+<script>
+
+     const editBtn = document.querySelectorAll('.btn1')
+        if (editBtn) {
+            for (i = 0; i < editBtn.length; i++) {
+                editBtn[i].addEventListener('click', function (e){
+
+                    window.location.href = `/edit_write/${e.target.dataset.id}`
+                })
+            }
+        }
+
+
+
+
+        const delBtn = document.querySelectorAll('.btn2')
+        if (delBtn) {
+            for (i = 0; i < delBtn.length; i++) {
+                delBtn[i].addEventListener('click', function (e) {
+                    e.preventDefault()
+                    const id = e.target.dataset.id
+                    $.ajax({
+                        type: "PUT",
+                        url: `api/delete?id=${id}`,
+                        success: function (res) {
+                            if (res['result'] == 'success') {
+                                window.location.href = '/my_main'
+                            }
+
+
+                        }
+                    })
+                })
+            }
+
+        }
+
+
+</script>
+</body>
+</html>

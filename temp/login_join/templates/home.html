@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://unpkg.com/mvp.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+</head>
+<body>
+    <button onclick="logout()" id="outBtn">로그아웃</button>
+    <h1>글을 입력해주세요</h1>
+    <form>
+        <textarea id="content"></textarea>
+        <input type="file">
+        <button id="writeBtn">글 작성</button>
+    </form>
+    <div id="content-list">
+        {% if contents %}
+            {% for i in contents %}
+
+                <div class="content">
+                    <h1 class="title">글 내용 : {{ i.content}}</h1>
+                    <p>작성 시각: {{ i.write_time }}</p>
+                    <span>작성자 : {{ i['user.nick'] }}</span>
+                    <button class="delBtn"  data-id={{i['_id']}} >삭제</button>
+                    <button class="upBtn"  data-id={{i['_id']}} >수정</button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</body>
+    <script>
+
+        const delBtn = document.querySelectorAll('.delBtn')
+        for (i=0;i<delBtn.length;i++){
+            delBtn[i].addEventListener('click',function(e){
+                e.preventDefault()
+                const id = e.target.dataset.id
+                $.ajax({
+                type: "PUT",
+                url: `api/delete?id=${id}`,
+                success: function(res) {
+                    /*아래처럼 실시간삭제기능 구현안했음 새로고침해야 반영됨*/
+                }
+                })
+            })
+        }
+
+        function logout(){
+                $.removeCookie('token');
+                window.location.href = '/'
+        }
+        function del(){
+
+        }
+        const writeBtn = document.getElementById('writeBtn')
+        writeBtn.addEventListener('click',function (e){
+            e.preventDefault()
+            const text = $('#content').val()
+            $.ajax({
+                type: "POST",
+                url: "api/write",
+                dataType: "json",
+                contentType: "application/json; charset=UTF-8",
+                data:JSON.stringify({"text_give": text}),
+                success: function(res){
+                    /* 쓴 글 실시간으로 위에 보이도록 설정*/
+                    const content = JSON.parse(res['content'])
+                    const contentList = document.getElementById('content-list')
+
+
+                    const div_content = document.createElement("div")
+                    div_content.setAttribute("class","content")
+                    const h1 = document.createElement("h1")
+                    h1.innerText = `글 내용 : ${ content.content}`
+                    div_content.append(h1)
+                    const p = document.createElement("p")
+                    p.innerHTML = `작성시각 : ${ content.write_time}`
+                    div_content.append(p)
+                    const span = document.createElement("span")
+                    span.innerHTML = `작성자 : ${ content['user.nick']}`
+                    div_content.append(span)
+
+                    const btn = document.createElement('button')
+                    btn.setAttribute('class', 'delBtn')
+
+                    btn.setAttribute('data-id', `${content['_id']['$oid']}`)
+                    btn.innerHTML = '삭제'
+                    div_content.append(btn)
+
+                    const upbtn = document.createElement('button')
+                    upbtn.setAttribute('class', 'upBtn')
+
+                    upbtn.setAttribute('data-id', `${content['_id']['$oid']}`)
+                    upbtn.innerHTML = '수정'
+                    div_content.append(upbtn)
+                    contentList.prepend(div_content)
+                    /*삭제 버튼에 이벤트 기능 안주었기에 생기자 마자 삭제, 수정 불가 */
+                }
+            });
+        })
+
+    </script>
+
+</html>

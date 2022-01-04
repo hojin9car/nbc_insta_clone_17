@@ -1,0 +1,198 @@
+/*참고 id는 #, class는 .을 앞에 사용*/
+/*전체*/
+body {
+    max-width: 720px;
+/*최대 너비값으로 해당 너비값보다 커지는 것을 방지*/
+    margin: 0 auto;
+/*위쪽과 아래쪽의 여백을 0으로 주고 좌우 여백은 균등하게 */
+/*background-color: antiquewhite;*/
+}
+
+/* 헤더 */
+#header {
+  position: fixed;
+  /*고정*/
+  max-width: 720px;
+  /*최대 너비값으로 해당 너비값보다 커지는 것을 방지*/
+  width: 100%;
+  /*max-width가 채워지기 전까지 95%만 채워준다*/
+  display: flex;
+  /*block 요소와 같은 수직 쌓임 , inline-flex는 수평 쌓임*/
+  justify-content: center;
+  /*가로축-중심축 : 공간사이 중간*/
+  align-items: center;
+  /*세로축-교차축 : 중심*/
+  border-bottom: 1px solid lightgray;
+  /*아래 굵기 : 두께 실선 색*/
+  background-color: lightpink;
+  /*배경색*/
+}
+#header #header-logo {
+  width: 60%;
+  /*헤더의 인스타그램 로고 크기 조절*/
+}
+
+/*포스트 컨테이너 자리*/
+#post-container {
+  padding-top:14%;
+/*컨테이너 바깥쪽의 윗부분만 여백 주기*/
+  padding-bottom: 12%;
+/*컨테이너 바깥쪽의 아랫부분만 여백주기*/
+  background-color: moccasin;
+}
+
+/* 포스트 - 헤더 */
+.post-header {
+  margin: 1% 0;
+  /*헤더 영역의 여백 설정*/
+  display: flex;
+  align-items: center;
+  /*세로축 - 교차축으로 중심*/
+  justify-content: flex-start;
+  /*가로축 -중심축으로 왼쪽으로 시작*/
+  width: 100%;
+  /*헤더 너비*/
+  background-color: green;
+  /*배경색*/
+}
+
+.post-header img {
+  /*이용자5 옆 왼쪽 그림*/
+  width: 10%;
+  /*이용자5 옆 왼쪽 그림의 너비*/
+  height: 10%;
+  /*이용자5 옆 왼쪽 그림의 최대 높이*/
+  border-radius: 50%;
+  /*모서리 깎기*/
+  border: 1px solid lightgray;
+  /*이미지 테두리 : 굵기 실선 색상*/
+  margin: 0 2%;
+  /*이용자5 옆 왼쪽 그림의 여백*/
+  /*background-color: chocolate;*/
+  /*포스트 헤더 왼쪽 영역 */
+}
+
+.post-header p {
+  /*이용자5 텍스트*/
+  margin-left: 1%;
+  /*왼쪽 그림에서 왼쪽으로 여백*/
+  font-weight: bold;
+  /*글씨 진하게*/
+  font-size: 15px;
+  /*이용자5 글씨 크기*/
+}
+
+/* 포스트 - 바디 */
+.post-body img {
+  width: 100%;
+  background-color: coral;
+}
+
+.post-body .post-body-icons-wrapper {
+  /*포스트-바디의 아이콘 줄 */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 1%;
+  /*포스트 바디 이미지와 포스트 바디 아이콘들의 간격(여백)*/
+  background-color: cornflowerblue;
+  /*배경색*/
+}
+.post-body .post-body-icons-wrapper .left-wrapper img {
+  /*포스트 바디의 아이콘 왼쪽*/
+  margin: 5% 25%;
+  width: 80%;
+}
+
+.post-body .post-body-icons-wrapper p{
+  font-size: 15px;
+}
+
+.post-body .post-body-icons-wrapper .right-wrapper img {
+  /*포스트 바디의 아이콘 오른쪽*/
+  margin: 2% 5%;
+  width: 35%;
+}
+
+.post-body .post-body-icons-wrapper .right-wrapper{
+  /*포스트 바디의 왼쪽 텍스트*/
+  margin-right: 3%;
+  /*왼쪽 그림에서 왼쪽으로 여백*/
+  font-size: 15px;
+  /*이용자5 글씨 크기*/
+}
+
+/* 포스트 - 푸터 */
+.post-footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+
+.post-footer img {
+  width: 10%;
+  height: 10%;
+  border-radius: 50%;
+  border: 1px solid lightgray;
+  margin: 0 1%;
+}
+
+.post-footer p {
+  margin-left: 2%;
+  margin-bottom: 2%;
+  margin-top: 2%;
+  font-size: 14px;
+}
+
+/* 푸터 */
+#footer {
+  bottom :0;
+  /*하단으로 보낸다*/
+  position: fixed;
+  /*고정*/
+  max-width: 720px;
+  /*최대 너비값으로 해당 너비값보다 커지는 것을 방지*/
+  width: 100%;
+  /*max-width가 채워지기 전까지 95%만 채워준다*/
+  border-top: 1px solid lightgray;
+  /*위 굵기 : 두께 실선 색*/
+  background-color: lightpink;
+  /*배경색*/
+}
+#footer #icon-wrapper {
+  margin: 3% 5%;
+  /*위아래 여백, 좌우 여백 & padding이랑 구분하기*/
+  display: flex;
+  /*block 요소와 같은 수직 쌓임 , inline-flex는 수평 쌓임*/
+  justify-content: space-between;
+  /*가로축 -중심축으로 공간사이 균등*/
+  align-items: center;
+  /*세로축-교차축 : 중심*/
+}
+#footer #icon-wrapper img {
+  width: 7%;
+  /*푸터의 홈,찾기등 5개 아이콘의 크기를 한번에 조절*/
+}
+
+.post-header botton {
+    margin-left: 3%;
+}
+
+.btn1{
+    background-color: lightpink;
+    border-radius: 10%;
+    padding: 1% 1% 1% 1%;
+    margin-left: 50%;
+}
+
+.btn2{
+    background-color: lightpink;
+    border-radius: 10%;
+    padding: 1% 1% 1% 1%;
+}
+
